@@ -6,13 +6,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable
+class Patient extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
+    protected $guard_name = 'patient';
     /**
      * The attributes that are mass assignable.
      *
@@ -44,23 +46,32 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+    protected static function booted(): void
+    {
+        static::creating(function (Patient $patient) {
+            $patient->password = Hash::make('patient12345');
+            $patient->assignRole('patient');
+        });
+    }
+
+
     // public function appointmentsAsDoctor()
     // {
     //     return $this->hasMany(Appointment::class, 'doctor_id');
     // }
 
-    // public function appointmentsAsPatient()
+    public function appointments()
+    {
+        return $this->hasMany(Appointment::class, 'patient_id');
+    }
+
+    // public function createdAppointments()
     // {
-    //     return $this->hasMany(Appointment::class, 'patient_id');
+    //     return $this->hasMany(Appointment::class, 'created_by');
     // }
 
-    public function createdAppointments()
-    {
-        return $this->hasMany(Appointment::class, 'created_by');
-    }
-
-    public function updatedAppointments()
-    {
-        return $this->hasMany(Appointment::class, 'updated_by');
-    }
+    // public function updatedAppointments()
+    // {
+    //     return $this->hasMany(Appointment::class, 'updated_by');
+    // }
 }

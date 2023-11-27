@@ -147,5 +147,4 @@ class DoctorPolicy
     {
         return $user->can('reorder_doctor');
     }
-
 }

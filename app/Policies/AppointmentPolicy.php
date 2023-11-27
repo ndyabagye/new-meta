@@ -147,5 +147,4 @@ class AppointmentPolicy
     {
         return $user->can('reorder_appointment');
     }
-
 }

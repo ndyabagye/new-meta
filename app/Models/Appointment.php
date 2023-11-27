@@ -9,14 +9,26 @@ class Appointment extends Model
 {
     use HasFactory;
 
+    protected static function booted(): void
+    {
+        static::creating(function (Appointment $appointment) {
+            $appointment->created_by = auth()->id();
+            $appointment->updated_by = auth()->id();
+        });
+
+        static::updating(function (Appointment $appointment) {
+            $appointment->updated_by = auth()->id();
+        });
+    }
+
     protected $fillable = [
         'doctor_id',
         'patient_id',
         'name',
         'institution',
         'department',
-        'appointment_start_date',
-        'appointment_end_date',
+        'appointment_start_time',
+        'appointment_end_time',
         'notes',
         'description',
         'created_by',
